@@ -1,3 +1,4 @@
+const dataController = require("../controllers/data");
 
 
 module.exports = (app) => {
@@ -5,5 +6,6 @@ module.exports = (app) => {
         res.json({ message: 'REST Service Working'});
     })
     
+    app.use('property', dataController)
     
 }
