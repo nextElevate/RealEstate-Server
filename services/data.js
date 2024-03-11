@@ -6,4 +6,8 @@ async function create(item) {
   return await newProperty.save();
 }
 
-module.exports = { create };
+async function getLastThree() {
+  return await Property.find({}).sort({ createdAt: -1 }).limit(3);
+}
+
+module.exports = { create, getLastThree };
