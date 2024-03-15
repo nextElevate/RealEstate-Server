@@ -48,6 +48,7 @@ const propertySchema = new Schema({
     { type: String, required: [true, "At least one image is required!"] },
   ],
   createdAt: { type: Date, default: Date.now },
+  vip: Boolean,
 });
 
 const Property = model("Property", propertySchema);

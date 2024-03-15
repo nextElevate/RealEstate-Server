@@ -1,6 +1,6 @@
 const dataController = require("express").Router();
 const { parseError } = require("../util/parser");
-const { create, getLastThree } = require("../services/data");
+const { create, getLastThree, getVipProperties } = require("../services/data");
 const multer = require("multer");
 const { initializeApp } = require("firebase/app");
 let currentSKU = 1;
@@ -79,6 +79,7 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
       floor: req.body.floor,
       image: images,
       createdAt,
+      vip: false,
     };
 
     const createdData = await create(data);
@@ -96,6 +97,16 @@ dataController.get("/last-three", async (req, res) => {
   try {
     const properties = await getLastThree();
     console.log(properties);
+    res.status(200).json(properties);
+  } catch (error) {
+    const message = parseError(error);
+    res.status(400).json({ message });
+  }
+});
+
+dataController.get("vip-properties", async (req, res) => {
+  try {
+    const properties = await getVipProperties();
     res.status(200).json(properties);
   } catch (error) {
     const message = parseError(error);

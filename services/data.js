@@ -10,4 +10,7 @@ async function getLastThree() {
   return await Property.find({}).sort({ createdAt: -1 }).limit(3);
 }
 
-module.exports = { create, getLastThree };
+async function getVipProperties() {
+  return await Property.find({ vip: true }).limit(2);
+}
+module.exports = { create, getLastThree, getVipProperties };
