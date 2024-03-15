@@ -36,26 +36,22 @@ const getNextSKU = () => {
 
 const createdAt = new Date();
 
-dataController.post("/add", upload.array("images", 9000), async (req, res) => {
-  console.log(req.files);
-  console.log(req.body);
+dataController.post("/add", upload.array("images", 10), async (req, res) => {
 
   if (!req.files || req.files.length === 0) {
-    throw new Error("no files provided");
+    res.status(502).json({ message: "No files provided" });
   }
   const images = [];
 
   for (const file of req.files) {
-    console.log(file.originalname);
     const storageRef = ref(storage, file.originalname);
     await uploadBytes(storageRef, file.buffer);
     const imageUrl = await getDownloadURL(storageRef);
     images.push(imageUrl);
   }
-  console.log(images);
 
   try {
-    const sku = await getNextSKU();
+    const sku = getNextSKU();
     const data = {
       sku,
       propertyType: req.body.propertyType,
@@ -68,8 +64,8 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
       currencyType: req.body.currencyType,
       constructionDate: JSON.parse(req.body.constructionDate),
       area: req.body.area,
-      city: req.body.city["name"],
-      location: req.body.location["name"],
+      city: req.body.city,
+      location: req.body.location,
       street: req.body.street,
       streetNumber: req.body.streetNumber,
       buildingNumber: req.body.buildingNumber,
@@ -83,12 +79,13 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
     };
 
     const createdData = await create(data);
-    res.status(201).send({
+    res.status(201).json({
       messasge: "Successfully uploaded",
       createdData,
     });
   } catch (error) {
     const message = parseError(error);
+    console.log(error.message);
     res.status(400).json({ message });
   }
 });
@@ -96,7 +93,6 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
 dataController.get("/last-three", async (req, res) => {
   try {
     const properties = await getLastThree();
-    console.log(properties);
     res.status(200).json(properties);
   } catch (error) {
     const message = parseError(error);

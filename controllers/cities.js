@@ -1,17 +1,15 @@
 const citiesController = require("express").Router();
 const { townOptions } = require("../data/data");
 citiesController.get("/cities", async (req, res) => {
-  console.log(req.query);
+  try {
+    const parseQuery = JSON.parse(req.query.value);
+    const searchValue = parseQuery["searchValue"];
+    const townNames = townOptions[searchValue] || [];
 
-  const parseQuery = JSON.parse(req.query.value);
-  const searchValue = parseQuery["searchValue"];
-
-  const findTownNamesBySearchValue = (searchValue) => {
-    return townOptions[searchValue] || [];
-  };
-
-  const townNames = findTownNamesBySearchValue(searchValue);
-  res.json({ townNames });
+    res.status(200).json({ townNames });
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
 });
 
 module.exports = citiesController;
