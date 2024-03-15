@@ -23,7 +23,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-
 const storage = getStorage(firebaseApp);
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -37,7 +36,7 @@ const getNextSKU = () => {
 const createdAt = new Date();
 
 dataController.post("/add", upload.array("images", 10), async (req, res) => {
-
+  try {
   if (!req.files || req.files.length === 0) {
     res.status(502).json({ message: "No files provided" });
   }
@@ -50,7 +49,6 @@ dataController.post("/add", upload.array("images", 10), async (req, res) => {
     images.push(imageUrl);
   }
 
-  try {
     const sku = getNextSKU();
     const data = {
       sku,
@@ -85,7 +83,6 @@ dataController.post("/add", upload.array("images", 10), async (req, res) => {
     });
   } catch (error) {
     const message = parseError(error);
-    console.log(error.message);
     res.status(400).json({ message });
   }
 });
