@@ -18,6 +18,14 @@ const propertySchema = new Schema({
     type: Number,
     required: true,
   },
+  city: {
+    type: String,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
   currencyType: { type: String },
   description: {
     type: String,

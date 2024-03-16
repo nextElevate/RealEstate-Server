@@ -97,7 +97,7 @@ dataController.get("/last-three", async (req, res) => {
   }
 });
 
-dataController.get("vip-properties", async (req, res) => {
+dataController.get("/vip-properties", async (req, res) => {
   try {
     const properties = await getVipProperties();
     res.status(200).json(properties);
