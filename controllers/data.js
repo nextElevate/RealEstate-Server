@@ -1,6 +1,11 @@
 const dataController = require("express").Router();
 const { parseError } = require("../util/parser");
-const { create, getLastThree, getVipProperties } = require("../services/data");
+const {
+  create,
+  getLastThree,
+  getVipProperties,
+  getLastRentProperties,
+} = require("../services/data");
 const multer = require("multer");
 const { initializeApp } = require("firebase/app");
 let currentSKU = 1;
@@ -21,8 +26,8 @@ const firebaseConfig = {
   measurementId: "G-0CFMZX4XPM",
 };
 
-// Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
+
 const storage = getStorage(firebaseApp);
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -35,10 +40,10 @@ const getNextSKU = () => {
 
 const createdAt = new Date();
 
-dataController.post("/add", upload.array("images", 10), async (req, res) => {
-  try {
+dataController.post("/add", upload.array("images", 9000), async (req, res) => {
+  console.log(req.body);
   if (!req.files || req.files.length === 0) {
-    res.status(502).json({ message: "No files provided" });
+    throw new Error("no files provided");
   }
   const images = [];
 
@@ -49,7 +54,8 @@ dataController.post("/add", upload.array("images", 10), async (req, res) => {
     images.push(imageUrl);
   }
 
-    const sku = getNextSKU();
+  try {
+    const sku = await getNextSKU();
     const data = {
       sku,
       propertyType: req.body.propertyType,
@@ -73,11 +79,12 @@ dataController.post("/add", upload.array("images", 10), async (req, res) => {
       floor: req.body.floor,
       image: images,
       createdAt,
+      statusType: req.body.propertyStatus === "Под Наем",
       vip: false,
     };
 
     const createdData = await create(data);
-    res.status(201).json({
+    res.status(201).send({
       messasge: "Successfully uploaded",
       createdData,
     });
@@ -100,6 +107,16 @@ dataController.get("/last-three", async (req, res) => {
 dataController.get("/vip-properties", async (req, res) => {
   try {
     const properties = await getVipProperties();
+    res.status(200).json(properties);
+  } catch (error) {
+    const message = parseError(error);
+    res.status(400).json({ message });
+  }
+});
+
+dataController.get("/last-rent", async (req, res) => {
+  try {
+    const properties = await getLastRentProperties();
     res.status(200).json(properties);
   } catch (error) {
     const message = parseError(error);
