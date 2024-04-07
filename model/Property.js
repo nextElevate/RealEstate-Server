@@ -57,6 +57,7 @@ const propertySchema = new Schema({
   ],
   createdAt: { type: Date, default: Date.now },
   vip: Boolean,
+  isNew: Boolean,
 });
 
 const Property = model("Property", propertySchema);

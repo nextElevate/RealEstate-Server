@@ -1,3 +1,4 @@
+require("dotenv").config();
 const dataController = require("express").Router();
 const { parseError } = require("../util/parser");
 const {
@@ -17,13 +18,13 @@ const {
 } = require("firebase/storage");
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCOzf0A46cpv2ZlndRMEuAkaehHh3o7Y4g",
-  authDomain: "armoda-8a8d7.firebaseapp.com",
-  projectId: "armoda-8a8d7",
-  storageBucket: "armoda-8a8d7.appspot.com",
-  messagingSenderId: "467246138233",
-  appId: "1:467246138233:web:294509fac140924d3865a8",
-  measurementId: "G-0CFMZX4XPM",
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASURMENT_ID,
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -39,9 +40,11 @@ const getNextSKU = () => {
 };
 
 const createdAt = new Date();
+const currentTime = new Date();
+const timeDifference = currentTime.getTime() - createdAt.getTime();
+const isNew = timeDifference < 24 * 60 * 60 * 1000;
 
 dataController.post("/add", upload.array("images", 9000), async (req, res) => {
-  console.log(req.body);
   if (!req.files || req.files.length === 0) {
     throw new Error("no files provided");
   }
@@ -79,8 +82,8 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
       floor: req.body.floor,
       image: images,
       createdAt,
-      statusType: req.body.propertyStatus === "Под Наем",
       vip: false,
+      isNew,
     };
 
     const createdData = await create(data);

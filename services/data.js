@@ -14,7 +14,9 @@ async function getVipProperties() {
 }
 
 async function getLastRentProperties() {
-  return await Property.find({ propertyStatus: "rent" }).limit(6);
+  return await Property.find({ propertyStatus: "rent" })
+    .sort({ createdAt: -1 })
+    .limit(6);
 }
 module.exports = {
   create,
