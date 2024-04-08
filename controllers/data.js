@@ -82,11 +82,14 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
       floor: req.body.floor,
       image: images,
       createdAt,
-      vip: false,
-      isNew,
+      label: [
+        { name: "vip", vip: false },
+        { name: "new", isNew: false },
+      ],
     };
 
     const createdData = await create(data);
+    console.log(createdData);
     res.status(201).send({
       messasge: "Successfully uploaded",
       createdData,

@@ -1,7 +1,9 @@
 const Property = require("../model/Property");
 
 async function create(item) {
+  console.log(item);
   const newProperty = new Property(item);
+  console.log(newProperty);
   return await newProperty.save();
 }
 
