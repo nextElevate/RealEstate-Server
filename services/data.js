@@ -20,9 +20,14 @@ async function getLastRentProperties() {
     .sort({ createdAt: -1 })
     .limit(6);
 }
+
+async function getPropertyById(id) {
+  return await Property.findById(id).lean();
+}
 module.exports = {
   create,
   getLastThree,
   getVipProperties,
   getLastRentProperties,
+  getPropertyById,
 };

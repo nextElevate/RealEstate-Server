@@ -6,6 +6,7 @@ const {
   getLastThree,
   getVipProperties,
   getLastRentProperties,
+  getPropertyById,
 } = require("../services/data");
 const multer = require("multer");
 const { initializeApp } = require("firebase/app");
@@ -84,7 +85,7 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
       createdAt,
       label: [
         { name: "vip", vip: false },
-        { name: "new", isNew: false },
+        { name: "new", isNew: isNew },
       ],
     };
 
@@ -124,6 +125,20 @@ dataController.get("/last-rent", async (req, res) => {
   try {
     const properties = await getLastRentProperties();
     res.status(200).json(properties);
+  } catch (error) {
+    const message = parseError(error);
+    res.status(400).json({ message });
+  }
+});
+
+dataController.get("/properties/:id", async (req, res) => {
+  try {
+    console.log("req");
+    console.log(req.params.id);
+    const id = req.params.id;
+    const data = await getPropertyById(id);
+    console.log(data);
+    res.status(200).send(data);
   } catch (error) {
     const message = parseError(error);
     res.status(400).json({ message });

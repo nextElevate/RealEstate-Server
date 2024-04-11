@@ -1,10 +1,5 @@
 const { Schema, model, Types } = require("mongoose");
 
-const labelSchema = new Schema({
-  name: { type: String, required: true },
-  [String]: Schema.Types.Mixed, // Allows dynamic properties based on the 'name' value
-});
-
 const propertySchema = new Schema({
   propertyType: {
     type: String,
