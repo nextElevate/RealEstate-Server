@@ -53,7 +53,7 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
 
   for (const file of req.files) {
     const storageRef = ref(storage, file.originalname);
-    await uploadBytes(storageRef, file.buffer);
+    await uploadBytes(storageRef, file.buffer, {  customMetadata: { 'resize': 'false' }});
     const imageUrl = await getDownloadURL(storageRef);
     images.push(imageUrl);
   }
@@ -95,8 +95,10 @@ dataController.post("/add", upload.array("images", 9000), async (req, res) => {
       messasge: "Successfully uploaded",
       createdData,
     });
+    console.log('Successfully uploaded property')
   } catch (error) {
     const message = parseError(error);
+    console.error(error.message)
     res.status(400).json({ message });
   }
 });
